@@ -11,7 +11,7 @@ public class BoardModel
     }
     const int _rowNum = 8;
     const int _colNum = 6;
-    cellType[,] _cells = new cellType[_rowNum + 1, _colNum];   //行数加1是因为把屏幕底部外的一行看作第一行
+    cellType[,] _cells = new cellType[_rowNum + 1, _colNum];   //行数加1是因为把屏幕底部外的一行看作最后一行
     /*
         eg. -----------
             1,2,1,1,2,3     row0
