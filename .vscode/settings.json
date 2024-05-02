@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "XiaoxiaoleDemo.sln"
+    "dotnet.defaultSolution": "Demo_Xiaoxiaole.sln"
 }
