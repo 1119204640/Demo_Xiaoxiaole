@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 
@@ -11,7 +12,7 @@ public class BoardModel
     }
     const int _rowNum = 8;
     const int _colNum = 6;
-    cellType[,] _cells = new cellType[_rowNum + 1, _colNum];   //行数加1是因为把屏幕底部外的一行看作最后一行
+    cellType[][] _cells = new cellType[_rowNum + 1][];   //行数加1是因为把屏幕底部外的一行看作最后一行
     /*
         eg. -----------
             1,2,1,1,2,3     row0
@@ -33,17 +34,16 @@ public class BoardModel
     #region 把私有属性设置为可外部访问的公共属性
     public int rowNum {get => _rowNum;}
     public int colNum {get => _colNum;}
-    public cellType[,] cells {
+    public cellType[][] cells {
         get => _cells;
-        set => _cells = value;
     }
     public float cellWidth {get => _cellWidth;}
     public float cellHeight {get => _cellHeight;}
     public float margin {get => _margin;}
     public float clip {get => _clip;}
-    public bool isEmpty {get => _isEmpty; set => _isEmpty = value;}
-    public int top {get => _top; set => _top = value;}
-    public bool isOver {get => _isOver; set => _isOver = value;}
+    public bool isEmpty {get => _isEmpty;}
+    public int top {get => _top;}
+    public bool isOver {get => _isOver;}
     #endregion
     
     cellType[] CreateRow() {
@@ -57,22 +57,21 @@ public class BoardModel
         return newRow;
     }
 
-    void InitBoard() {
+    public void InitBoard() {
         for (int i = 0; i < _rowNum; i++) {    //屏幕内的都初始化为空
+        _cells[i] = new cellType[_colNum];
             for (int j = 0; j < _colNum; j++) {
-                _cells[i,j] = cellType.Empty;
+                _cells[i][j] = cellType.Empty;
             }
         }
         cellType[] temp = CreateRow();  //屏幕外一行都随机初始化
-        for (int k = 0; k < _colNum; k++) {
-            _cells[_rowNum, k] = temp[k];
-        }
+        _cells[_rowNum] = temp;
     }
 
-    void CheckBoardState() {
+    void UpdateBoardState() {
         for (int i = 0; i < _rowNum; i++) {
             for (int j = 0; j < _colNum; j++) {
-                if (_cells[i,j] != cellType.Empty) {
+                if (_cells[i][j] != cellType.Empty) {
                     _top = i;
                     _isEmpty = false;
                     return;
@@ -81,9 +80,7 @@ public class BoardModel
         }
         _top = _rowNum;
         _isEmpty = true;
-    }
 
-    void IsGameOver() {
         if (_top >= 0) {
             _isOver = false;
         }
@@ -91,6 +88,15 @@ public class BoardModel
     }
     
     void MoveUpward() { //把所有行上移一行
-
+        int newTop = _top - 1;
+        if (newTop < 0) {
+            _isOver = true;
+        }
+        else {
+            for (int i = newTop; i < _rowNum; i++) {
+                _cells[i] = _cells[i+1];
+            }
+            _top = newTop;
+        }
     }
 }
